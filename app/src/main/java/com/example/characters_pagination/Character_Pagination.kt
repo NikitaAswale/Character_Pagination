@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -27,11 +26,9 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
@@ -43,21 +40,22 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.paging.compose.collectAsLazyPagingItems
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Character_UI() {
+fun Character_UI(viewModel: Character_ViewModel = viewModel()) {
+
+    val character = viewModel.character.collectAsLazyPagingItems()
 
     Scaffold(
         topBar = {
@@ -109,7 +107,8 @@ fun Character_UI() {
                                 .clip(CircleShape)
                                 .background(Color(0xFFE3F2FD))
                                 .padding(6.dp)
-                                .size(20.dp).size(20.dp)
+                                .size(20.dp)
+                                .size(20.dp)
                         )
 
                     }
@@ -118,9 +117,11 @@ fun Character_UI() {
         },
         bottomBar = {
             BottomAppBar() {
-                Row(modifier = Modifier.fillMaxWidth(),
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceEvenly,
-                    verticalAlignment = Alignment.CenterVertically) {
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
 
                     BottomBar(
                         icon = painterResource(android.R.drawable.ic_menu_compass),
@@ -146,7 +147,8 @@ fun Character_UI() {
                 }
             }
         }
-    ) {paddingValues -> paddingValues
+    ) { paddingValues ->
+        paddingValues
 
         Column(
             modifier = Modifier
@@ -225,28 +227,26 @@ fun Character_UI() {
 
             Spacer(Modifier.height(12.dp))
 
-           HorizontalDivider(
-               modifier = Modifier.fillMaxWidth(),
-               color = Color.LightGray
-           )
+            HorizontalDivider(
+                modifier = Modifier.fillMaxWidth(),
+                color = Color.LightGray
+            )
 
             Spacer(Modifier.height(16.dp))
 
-//
-//    LazyColumn(modifier = Modifier
-//        .background(Color.Black)) {
-//        items(character.itemCount) { index ->
-//            character[index]?.let {
-//                Anime(character = it)
-//            }
-//        }
-//
-//    }
 
-            LazyColumn() {
-                item {
-                    Anime()
+            LazyColumn(
+                modifier = Modifier
+                    .background(Color.Black)
+            ) {
+                items(
+                    character.itemCount
+                ) { index ->
+                    character[index]?.let {
+                        Anime(character = it)
+                    }
                 }
+
             }
 
             Spacer(Modifier.height(20.dp))
@@ -257,35 +257,45 @@ fun Character_UI() {
 
             Spacer(Modifier.height(20.dp))
 
-            Row(Modifier.fillMaxWidth(),
+            Row(
+                Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceEvenly,
-                verticalAlignment = Alignment.CenterVertically) {
+                verticalAlignment = Alignment.CenterVertically
+            ) {
 
-                Button(onClick = {},
+                Button(
+                    onClick = {},
                     modifier = Modifier,
                     colors = ButtonDefaults.buttonColors(containerColor = Color.White),
                     border = BorderStroke
-                (1.dp, color = Color.LightGray)) {
-                    Icon(painter = painterResource(android.R.drawable.ic_media_previous), contentDescription = "",
+                        (1.dp, color = Color.LightGray)
+                ) {
+                    Icon(
+                        painter = painterResource(android.R.drawable.ic_media_previous),
+                        contentDescription = "",
                         tint = Color.Gray,
                         modifier = Modifier.size(20.dp)
                     )
-                    Text("Previous",
+                    Text(
+                        "Previous",
                         fontWeight = FontWeight.Bold,
                         fontSize = 12.sp,
                         color = Color.Black
                     )
                 }
 
-                Text("Page 2 of 42",
+                Text(
+                    "Page 2 of 42",
                     fontSize = 12.sp
                 )
 
-                Button(onClick = {},
+                Button(
+                    onClick = {},
                     modifier = Modifier,
                     colors = ButtonDefaults.buttonColors(containerColor = Color.White),
                     border = BorderStroke
-                        (1.dp, color = Color.LightGray)) {
+                        (1.dp, color = Color.LightGray)
+                ) {
                     Icon(
                         painter = painterResource(android.R.drawable.ic_media_previous),
                         tint = Color.Gray,
@@ -293,7 +303,8 @@ fun Character_UI() {
                         modifier = Modifier.size(20.dp)
                     )
 
-                    Text("Next",
+                    Text(
+                        "Next",
                         fontWeight = FontWeight.Bold,
                         fontSize = 12.sp,
                         color = Color.Black
@@ -308,7 +319,7 @@ fun Character_UI() {
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun Anime() {
+fun Anime(character: Result) {
 
     Card(
         modifier = Modifier
@@ -346,7 +357,7 @@ fun Anime() {
                 ) {
 
                     Text(
-                        text = "Name",
+                        text = "${character.name}",
                         modifier = Modifier.weight(1f),
                         maxLines = 2,
                         overflow = TextOverflow.Ellipsis,
@@ -396,53 +407,53 @@ fun Anime() {
                     horizontalArrangement = Arrangement.Start
                 ) {
                     Text(
-                        text = "species",
+                        text = "${character.species}",
                         fontSize = 14.sp,
                         color = Color.Gray,
                         fontWeight = FontWeight.Bold
                     )
 
-                    //if (character.type.isNotBlank()) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Spacer(Modifier.width(6.dp))
-                        Box(
-                            modifier = Modifier
-                                .size(5.dp)
-                                .background(
-                                    color = Color.Gray,
-                                    shape = CircleShape
-                                )
-                        )
-                        Spacer(Modifier.width(6.dp))
-                        Text(
-                            text = "type",
-                            fontSize = 12.sp,
-                            color = Color.Gray,
-                            fontWeight = FontWeight.Bold
-                        )
+                    if (character.type.isNotBlank()) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Spacer(Modifier.width(6.dp))
+                            Box(
+                                modifier = Modifier
+                                    .size(5.dp)
+                                    .background(
+                                        color = Color.Gray,
+                                        shape = CircleShape
+                                    )
+                            )
+                            Spacer(Modifier.width(6.dp))
+                            Text(
+                                text = "type",
+                                fontSize = 12.sp,
+                                color = Color.Gray,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
                     }
-                    // }
 
-                    // if (character.gender.isNotBlank()) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Spacer(Modifier.width(6.dp))
-                        Box(
-                            modifier = Modifier
-                                .size(5.dp)
-                                .background(
-                                    color = Color.Gray,
-                                    shape = CircleShape
-                                )
-                        )
-                        Spacer(Modifier.width(6.dp))
-                        Text(
-                            text = "gender",
-                            fontSize = 12.sp,
-                            color = Color.Gray,
-                            fontWeight = FontWeight.Bold
-                        )
+                    if (character.gender.isNotBlank()) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Spacer(Modifier.width(6.dp))
+                            Box(
+                                modifier = Modifier
+                                    .size(5.dp)
+                                    .background(
+                                        color = Color.Gray,
+                                        shape = CircleShape
+                                    )
+                            )
+                            Spacer(Modifier.width(6.dp))
+                            Text(
+                                text = "${character.gender}",
+                                fontSize = 12.sp,
+                                color = Color.Gray,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
                     }
-                    // }
                 }
 
                 Row(
@@ -461,7 +472,7 @@ fun Anime() {
                     Spacer(Modifier.width(6.dp))
 
                     Text(
-                        "location.name",
+                        "${character.location.name}",
                         fontSize = 12.sp,
                         color = Color.Gray,
                         fontWeight = FontWeight.Bold
@@ -481,7 +492,7 @@ fun Anime() {
 @Composable
 fun lazyRowAnime(
     text: String
-){
+) {
     Text(
         text = text,
         fontSize = 14.sp,
@@ -497,14 +508,16 @@ fun lazyRowAnime(
 
 @Composable
 fun BottomBar(
-    icon : Painter,
+    icon: Painter,
     text: String
 
-){
+) {
 
-    Column(modifier = Modifier,
+    Column(
+        modifier = Modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center) {
+        verticalArrangement = Arrangement.Center
+    ) {
         Icon(
             painter = icon,
             contentDescription = text,
@@ -517,16 +530,10 @@ fun BottomBar(
         )
 
         Text(
-        text = text,
+            text = text,
             fontSize = 12.sp,
             fontWeight = FontWeight.Bold,
             color = Color.DarkGray
         )
     }
-}
-
-@Preview
-@Composable
-fun PreviewCharacter(){
-    Character_UI()
 }
